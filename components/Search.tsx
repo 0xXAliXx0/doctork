@@ -1,85 +1,95 @@
 'use client'
 import React, { useState } from 'react'
-import InputWithButton from '@/components/InputWithButton'
-import { insertDoctor, searchDoctorsByName, Doctor } from '@/lib/doctorService'
+import ReviewForm from './ReviewForm'
+import { insertReview, insertPatient, getPatientByEmail } from '@/lib/database-functions'
 
-const Search: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [newDoctorName, setNewDoctorName] = useState('')
-  const [inserting, setInserting] = useState(false)
-  const [results, setResults] = useState<Doctor[] | null>(null)
+// Example of how to use the new components
+function ReviewPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [message, setMessage] = useState('')
 
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) return
-    setLoading(true)
+  const handleReviewSubmit = async (reviewData: any) => {
+    setIsSubmitting(true)
+    setMessage('')
+    
     try {
-      const { data, error } = await searchDoctorsByName(searchTerm)
-      if (error) console.error('Search error:', error)
-      else setResults(data)
-    } catch (err) {
-      console.error('Unexpected error:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleInsert = async () => {
-    if (!newDoctorName.trim()) return
-    setInserting(true)
-    try {
-      const { data, error } = await insertDoctor(newDoctorName)
-      if (error) console.error('Insert error:', error)
-      else {
-        console.log('Inserted:', data)
-        setNewDoctorName('')
-        setResults(null) // optional: clear results after adding
+      // For MVP, you might get patient info from your auth system
+      // or create a simple patient registration form
+      
+      // Example: Get current user's patient record
+      const userEmail = 'user@example.com' // Get from your auth system
+      
+      let patientId: string
+      
+      // Try to get existing patient
+      const { data: existingPatient, error: patientError } = await getPatientByEmail(userEmail)
+      
+      if (existingPatient) {
+        patientId = existingPatient.id
+      } else {
+        // Create new patient record
+        const { data: newPatient, error: createError } = await insertPatient({
+          name: 'Current User', // Get from auth system
+          email: userEmail
+        })
+        
+        if (createError || !newPatient?.[0]) {
+          throw new Error('Failed to create patient record')
+        }
+        
+        patientId = newPatient[0].id
       }
-    } catch (err) {
-      console.error('Unexpected error:', err)
+
+      // Insert the review
+      const { data: review, error: reviewError } = await insertReview({
+        doctor_name: reviewData.doctorName,
+        doctor_specialization: reviewData.doctorSpecialization,
+        clinic_name: reviewData.clinicName,
+        doctor_location: reviewData.doctorLocation,
+        patient_id: patientId,
+        rating: reviewData.rating,
+        review_text: reviewData.reviewText
+      })
+
+      if (reviewError) {
+        throw new Error('Failed to submit review')
+      }
+
+      setMessage('Review submitted successfully!')
+      
+    } catch (error) {
+      setMessage('Error submitting review. Please try again.')
+      console.error('Review submission error:', error)
     } finally {
-      setInserting(false)
+      setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Search for Doctor</h1>
-        <InputWithButton value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          onClick={handleSearch}
-          placeholder="Enter doctor name"
-          disabled={loading}
-          buttonText="Search"
-          loadingText="Searching..."
-        />
-      </div>
-
-      {results && results.length > 0 && (
-        <ul className="mb-8 space-y-2">
-          {results.map((doctor) => (
-            <li key={doctor.id} className="p-2 bg-gray-100 rounded-md">
-              {doctor.name}
-            </li>
-          ))}
-        </ul>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        Write a Doctor Review
+      </h1>
+      
+      <ReviewForm
+        onSubmit={handleReviewSubmit}
+        disabled={isSubmitting}
+        buttonText="Submit Review"
+        loadingText="Submitting..."
+        buttonColor="blue"
+      />
+      
+      {message && (
+        <div className={`mt-4 p-4 rounded-md ${
+          message.includes('Error') 
+            ? 'bg-red-50 text-red-700 border border-red-200' 
+            : 'bg-green-50 text-green-700 border border-green-200'
+        }`}>
+          {message}
+        </div>
       )}
-
-      <div className="border-t pt-6">
-        <h2 className="text-xl font-bold mb-4">Add New Doctor</h2>
-        <InputWithButton value={newDoctorName} onChange={(e) => setNewDoctorName(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleInsert()}
-          onClick={handleInsert}
-          placeholder="Enter new doctor name"
-          disabled={inserting}
-          buttonText="Add Doctor"
-          loadingText="Adding..."
-          buttonColor="green"
-        />
-      </div>
     </div>
   )
 }
 
-export default Search
+export default ReviewPage
