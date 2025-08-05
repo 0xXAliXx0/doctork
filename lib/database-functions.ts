@@ -34,7 +34,7 @@ export async function insertPatient(patientData: {
   auth_user_id?: string
 }) {
   return await supabase
-    .from('patients_table')
+    .from('patients_table')//selects patients_table
     .insert([{
       name: patientData.name.trim(),
       email: patientData.email.trim().toLowerCase(),
@@ -117,6 +117,7 @@ export async function getDoctorAverageRating(doctorName: string) {
   }
 
   const totalRating = data.reduce((sum, review) => sum + review.rating, 0)
+  
   const averageRating = totalRating / data.length
 
   return {

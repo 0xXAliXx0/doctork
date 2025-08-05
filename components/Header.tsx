@@ -174,8 +174,8 @@ const Header = () => {
       {user && (
         <div className="md:hidden border-t border-gray-200 px-4 py-3">
           <div className="flex space-x-6">
-            <Link href="/dashboard" className="text-gray-700 hover:text-indigo-600 transition-colors">
-              Dashboard
+            <Link href="/my_reviews" className="text-gray-700 hover:text-indigo-600 transition-colors">
+             Reviews 
             </Link>
             <Link href="/profile" className="text-gray-700 hover:text-indigo-600 transition-colors">
               Profile

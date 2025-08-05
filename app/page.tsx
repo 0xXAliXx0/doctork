@@ -41,11 +41,11 @@ const CategoryCard = ({ icon: Icon, title, description, count, href, color = "bl
 }
 
 const page = () => {
- const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+ // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
- const toggleMobileMenu = () => {
-   setIsMobileMenuOpen(!isMobileMenuOpen)
- }
+ // const toggleMobileMenu = () => {
+ //   setIsMobileMenuOpen(!isMobileMenuOpen)
+ // }
 
  const categories = [
    {
@@ -53,7 +53,7 @@ const page = () => {
      title: "Highest Rated Doctors", 
      description: "Top-rated physicians with 4.5+ star reviews from verified patients",
      count: "2,847",
-     href: "/categories/highest-rated",
+     href: "/search",
      color: "green"
    },
    {
@@ -61,7 +61,7 @@ const page = () => {
      title: "Trending This Week",
      description: "Most searched and reviewed doctors in your area this week", 
      count: "892",
-     href: "/categories/trending",
+     href: "/search",
      color: "blue"
    },
    {
@@ -69,7 +69,7 @@ const page = () => {
      title: "Most Controversial",
      description: "Doctors with mixed reviews - see what patients really think",
      count: "423",
-     href: "/categories/controversial", 
+     href: "/search", 
      color: "red"
    },
    {
@@ -77,7 +77,7 @@ const page = () => {
      title: "Recently Reviewed",
      description: "Latest patient experiences and feedback from this month",
      count: "1,234",
-     href: "/categories/recent",
+     href: "/search",
      color: "purple"
    },
    {
@@ -85,7 +85,7 @@ const page = () => {
      title: "Most Reviewed",
      description: "Doctors with the highest number of patient reviews",
      count: "567", 
-     href: "/categories/most-reviewed",
+     href: "/search",
      color: "yellow"
    }
  ]
@@ -94,18 +94,18 @@ const page = () => {
    <div className="min-h-screen bg-gray-50">
      <Header />
      
-     {/* Mobile Menu Button */}
-     <div className="lg:hidden fixed top-4 right-4 z-50">
+     {/* Mobile Menu Button - Commented Out */}
+     {/* <div className="lg:hidden fixed top-4 right-4 z-50">
        <button
          onClick={toggleMobileMenu}
          className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
        >
          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
        </button>
-     </div>
+     </div> */}
 
-     {/* Mobile Slide Menu */}
-     <div className={`lg:hidden fixed inset-y-0 right-0 z-40 w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
+     {/* Mobile Slide Menu - Commented Out */}
+     {/* <div className={`lg:hidden fixed inset-y-0 right-0 z-40 w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
        isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
      }`}>
        <div className="p-6 pt-20">
@@ -137,7 +137,7 @@ const page = () => {
            </Link>
          </div>
        </div>
-     </div>
+     </div> */}
 
      {/* Desktop Navigation */}
      <div className="hidden lg:block bg-white border-b border-gray-200">
@@ -255,13 +255,13 @@ const page = () => {
        </div>
      </div>
 
-     {/* Overlay for mobile menu */}
-     {isMobileMenuOpen && (
+     {/* Overlay for mobile menu - Commented Out */}
+     {/* {isMobileMenuOpen && (
        <div 
          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
          onClick={() => setIsMobileMenuOpen(false)}
        />
-     )}
+     )} */}
 
      <Footer />
    </div>
